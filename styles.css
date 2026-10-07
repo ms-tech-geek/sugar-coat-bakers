@@ -542,7 +542,7 @@ body {
   opacity: 0.7;
 }
 
-/* ─── Admin / preview links ─── */
+/* ─── Admin (hidden until PIN unlock) ─── */
 .admin-links {
   display: flex;
   flex-wrap: wrap;
@@ -550,7 +550,73 @@ body {
   justify-content: center;
   gap: 0.35rem 0.85rem;
   margin-top: 0.5rem;
-  padding: 0 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 12px;
+  background: rgba(245, 235, 228, 0.85);
+  border: 1px solid rgba(184, 136, 107, 0.2);
+}
+
+.admin-links[hidden] {
+  display: none;
+}
+
+.pin-modal {
+  width: min(92vw, 380px);
+}
+
+.pin-body {
+  padding: 1rem 1.35rem 1.35rem;
+}
+
+.pin-message {
+  font-size: 0.88rem;
+  color: var(--brown-mid);
+  margin-bottom: 1rem;
+  line-height: 1.45;
+}
+
+.pin-field {
+  display: block;
+  margin-bottom: 0.85rem;
+}
+
+.pin-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brown-soft);
+  margin-bottom: 0.35rem;
+}
+
+.pin-field input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--input-border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-align: center;
+  color: var(--brown);
+}
+
+.pin-field input:focus {
+  outline: none;
+  border-color: var(--rose-gold-light);
+  box-shadow: 0 0 0 3px rgba(184, 136, 107, 0.12);
+}
+
+.pin-hint {
+  font-size: 0.72rem;
+  color: #c94444;
+  margin: -0.35rem 0 0.75rem;
+}
+
+.pin-hint[hidden] {
+  display: none;
 }
 
 .export-link,

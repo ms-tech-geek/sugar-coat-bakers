@@ -1,5 +1,5 @@
 /* Sugar Coat Bakers — offline cache for iPad stall use */
-const CACHE = 'sugar-coat-v1';
+const CACHE = 'sugar-coat-v2';
 
 const ASSETS = [
   './',

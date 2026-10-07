@@ -55,7 +55,7 @@
 
   <div class="page">
     <header class="header">
-      <div class="logo-frame">
+      <div class="logo-frame" id="logo-frame" title="">
         <img src="assets/logo.jpg" alt="Sugar Coat Bakers — Eggless" class="logo">
       </div>
       <p class="tagline">HOMEMADE &bull; FRESH &bull; MADE FROM SCRATCH</p>
@@ -147,11 +147,12 @@
       <span class="footer-heart">&#9825;</span>
     </footer>
 
-    <div class="admin-links">
+    <div class="admin-links" id="admin-links" hidden>
       <button type="button" class="export-link" id="export-trigger" aria-label="View and export saved entries">
         Export entries (<span id="entry-count">0</span>)
       </button>
       <button type="button" class="preview-link preview-link-danger" id="clear-all-btn">Clear all entries</button>
+      <button type="button" class="preview-link" id="admin-lock-btn">Lock admin</button>
     </div>
   </div>
 
@@ -207,6 +208,29 @@
         <button type="button" class="page-btn" id="next-page" aria-label="Next page">Next &#8594;</button>
       </nav>
     </div>
+  </dialog>
+
+  <dialog class="modal pin-modal" id="pin-modal">
+    <div class="modal-header">
+      <h2 id="pin-modal-title">Admin PIN</h2>
+      <button type="button" class="modal-close" id="pin-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <form class="pin-body" id="pin-form">
+      <p class="pin-message" id="pin-message">Enter your 4-digit admin PIN.</p>
+      <label class="pin-field" for="pin-input">
+        <span class="pin-label" id="pin-label">PIN</span>
+        <input type="password" id="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required>
+      </label>
+      <label class="pin-field" id="pin-confirm-wrap" hidden>
+        <span class="pin-label">Confirm PIN</span>
+        <input type="password" id="pin-confirm-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+      </label>
+      <p class="pin-hint" id="pin-hint" hidden></p>
+      <div class="edit-actions">
+        <button type="button" class="btn-cancel" id="pin-cancel-btn">Cancel</button>
+        <button type="submit" class="btn-export" id="pin-submit-btn">Unlock</button>
+      </div>
+    </form>
   </dialog>
 
   <dialog class="modal confirm-modal" id="delete-modal">

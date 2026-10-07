@@ -19,25 +19,13 @@ Tablet-friendly web app for capturing customer details at the stall. **Works off
 
 The app must be **installed once at home** while the iPad has Wi‑Fi. After that, it runs from the Home Screen icon with no laptop and no internet.
 
-### Step 1 — Put the app online (one time, at home)
+### Step 1 — App is already hosted
 
-Pick **one** option:
+The app is deployed at **[sugar-coat-bakers.netlify.app](https://sugar-coat-bakers.netlify.app)**.
 
-#### Option A — GitHub Pages (free, permanent link)
+Code lives on GitHub: **[ms-tech-geek/sugar-coat-bakers](https://github.com/ms-tech-geek/sugar-coat-bakers)**.
 
-1. Create a GitHub repo and push this folder
-2. Repo **Settings → Pages → Source: main branch**
-3. Your app URL will be: `https://<username>.github.io/<repo-name>/`
-
-#### Option B — Netlify Drop (fastest, no git)
-
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag this entire folder onto the page
-3. Netlify gives you a URL like `https://random-name.netlify.app`
-
-#### Option C — Cloudflare Pages / Vercel
-
-Upload this folder as a static site (same idea as Netlify).
+Push to `main` → Netlify auto-deploys (after GitHub is linked in Netlify — see below).
 
 ### Step 2 — Install on iPad (one time, at home)
 
@@ -78,6 +66,8 @@ Open `http://localhost:8080` on your Mac, or `http://<mac-ip>:8080` on iPad (sam
 
 - **Use Safari + Add to Home Screen.** Opening `index.html` from the Files app is unreliable.
 - **One iPad = one database.** Entries are stored in that iPad’s browser. Use the same iPad all day.
+- **Data stays on the iPad.** The public website URL does not upload customer data. Someone on another device cannot see your stall entries.
+- **Admin PIN protects export & clear.** Tap the logo **5 times** → set or enter a 4-digit PIN → admin tools appear for 30 minutes. Customers only see the entry form.
 - **Export before clearing.** Use CSV/PDF export to back up; “Clear all entries” is permanent.
 - **Instagram QR** works offline (image is bundled in the app).
 - **Do not clear Safari website data** for this app — that deletes saved entries.

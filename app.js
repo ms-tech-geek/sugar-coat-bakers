@@ -1,4 +1,7 @@
 const STORAGE_KEY = 'sugar-coat-customers';
+const ADMIN_PIN_KEY = 'sugar-coat-admin-pin';
+const ADMIN_SESSION_KEY = 'sugar-coat-admin-until';
+const ADMIN_SESSION_MS = 30 * 60 * 1000;
 const MIN_AMOUNT = 0;
 const MAX_AMOUNT = 5000;
 const PAGE_SIZE = 20;
@@ -60,6 +63,147 @@ const pageInfoEl = document.getElementById('page-info');
 const prevPageBtn = document.getElementById('prev-page');
 const nextPageBtn = document.getElementById('next-page');
 const entriesTableWrap = document.getElementById('entries-table-wrap');
+const adminLinksEl = document.getElementById('admin-links');
+const logoFrameEl = document.getElementById('logo-frame');
+const pinModal = document.getElementById('pin-modal');
+const pinForm = document.getElementById('pin-form');
+const pinInput = document.getElementById('pin-input');
+const pinConfirmInput = document.getElementById('pin-confirm-input');
+const pinConfirmWrap = document.getElementById('pin-confirm-wrap');
+const pinMessageEl = document.getElementById('pin-message');
+const pinHintEl = document.getElementById('pin-hint');
+const pinModalTitle = document.getElementById('pin-modal-title');
+const pinSubmitBtn = document.getElementById('pin-submit-btn');
+
+let pinModalMode = 'verify'; // 'verify' | 'setup'
+let pendingAdminAction = null;
+let logoTapCount = 0;
+let logoTapTimer = null;
+
+async function hashPin(pin) {
+  const data = new TextEncoder().encode(`sugar-coat-admin:${pin}`);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function getStoredPinHash() {
+  return localStorage.getItem(ADMIN_PIN_KEY);
+}
+
+function isAdminSessionActive() {
+  const until = Number(sessionStorage.getItem(ADMIN_SESSION_KEY) || 0);
+  return until > Date.now();
+}
+
+function unlockAdminSession() {
+  sessionStorage.setItem(ADMIN_SESSION_KEY, String(Date.now() + ADMIN_SESSION_MS));
+  adminLinksEl.hidden = false;
+}
+
+function lockAdminSession() {
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  adminLinksEl.hidden = true;
+  if (modal.open) modal.close();
+  closeExportMenu();
+}
+
+function syncAdminUi() {
+  adminLinksEl.hidden = !isAdminSessionActive();
+}
+
+function openPinModal(mode, message) {
+  pinModalMode = mode;
+  pinHintEl.hidden = true;
+  pinInput.value = '';
+  pinConfirmInput.value = '';
+  pinInput.classList.remove('error');
+
+  if (mode === 'setup') {
+    pinModalTitle.textContent = 'Set Admin PIN';
+    pinSubmitBtn.textContent = 'Save PIN';
+    pinConfirmWrap.hidden = false;
+    pinMessageEl.textContent =
+      message || 'Create a 4-digit PIN. You will need it to view, export, or clear entries.';
+  } else {
+    pinModalTitle.textContent = 'Admin PIN';
+    pinSubmitBtn.textContent = 'Unlock';
+    pinConfirmWrap.hidden = true;
+    pinMessageEl.textContent = message || 'Enter your 4-digit admin PIN.';
+  }
+
+  pinModal.showModal();
+  pinInput.focus();
+}
+
+function closePinModal() {
+  pinModal.close();
+  pendingAdminAction = null;
+}
+
+function isValidPin(pin) {
+  return /^\d{4}$/.test(pin);
+}
+
+async function saveAdminPin(pin) {
+  localStorage.setItem(ADMIN_PIN_KEY, await hashPin(pin));
+}
+
+async function verifyAdminPin(pin) {
+  const stored = getStoredPinHash();
+  if (!stored) return false;
+  return (await hashPin(pin)) === stored;
+}
+
+function requireAdmin(action) {
+  if (isAdminSessionActive()) {
+    action();
+    return;
+  }
+  pendingAdminAction = action;
+  if (!getStoredPinHash()) {
+    openPinModal('setup');
+    return;
+  }
+  openPinModal('verify');
+}
+
+function completeAdminUnlock() {
+  unlockAdminSession();
+  closePinModal();
+  showToast('Admin unlocked for 30 minutes');
+  if (pendingAdminAction) {
+    const action = pendingAdminAction;
+    pendingAdminAction = null;
+    action();
+  }
+}
+
+function registerLogoAdminGesture() {
+  logoFrameEl.addEventListener('click', () => {
+    logoTapCount += 1;
+    clearTimeout(logoTapTimer);
+    logoTapTimer = setTimeout(() => {
+      logoTapCount = 0;
+    }, 2500);
+
+    if (logoTapCount < 5) return;
+    logoTapCount = 0;
+
+    if (isAdminSessionActive()) {
+      showToast('Admin already unlocked');
+      return;
+    }
+
+    pendingAdminAction = null;
+    if (!getStoredPinHash()) {
+      openPinModal('setup');
+      return;
+    }
+    openPinModal('verify');
+  });
+}
 
 function getCustomers() {
   try {
@@ -787,9 +931,11 @@ entriesTableBody.addEventListener('click', (e) => {
 document.getElementById('new-entry-btn').addEventListener('click', showForm);
 
 document.getElementById('export-trigger').addEventListener('click', () => {
-  resetEntriesView();
-  renderEntriesTable(1);
-  modal.showModal();
+  requireAdmin(() => {
+    resetEntriesView();
+    renderEntriesTable(1);
+    modal.showModal();
+  });
 });
 
 entriesSearchInput.addEventListener('input', (e) => {
@@ -844,16 +990,77 @@ document.getElementById('delete-confirm-btn').addEventListener('click', () => {
 });
 
 document.getElementById('clear-all-btn').addEventListener('click', () => {
-  const total = getCustomers().length;
-  if (total === 0) {
-    showToast('No entries to clear');
+  requireAdmin(() => {
+    const total = getCustomers().length;
+    if (total === 0) {
+      showToast('No entries to clear');
+      return;
+    }
+    openConfirmModal(
+      'clear-all',
+      `Delete all ${total} entr${total === 1 ? 'y' : 'ies'}? This cannot be undone.`
+    );
+  });
+});
+
+document.getElementById('admin-lock-btn').addEventListener('click', () => {
+  lockAdminSession();
+  showToast('Admin locked');
+});
+
+pinForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  pinHintEl.hidden = true;
+
+  const pin = pinInput.value.trim();
+  if (!isValidPin(pin)) {
+    pinHintEl.textContent = 'PIN must be exactly 4 digits.';
+    pinHintEl.hidden = false;
     return;
   }
-  openConfirmModal(
-    'clear-all',
-    `Delete all ${total} entr${total === 1 ? 'y' : 'ies'}? This cannot be undone.`
-  );
+
+  if (pinModalMode === 'setup') {
+    const confirmPin = pinConfirmInput.value.trim();
+    if (pin !== confirmPin) {
+      pinHintEl.textContent = 'PINs do not match. Try again.';
+      pinHintEl.hidden = false;
+      return;
+    }
+    await saveAdminPin(pin);
+    completeAdminUnlock();
+    return;
+  }
+
+  const ok = await verifyAdminPin(pin);
+  if (!ok) {
+    pinHintEl.textContent = 'Incorrect PIN.';
+    pinHintEl.hidden = false;
+    pinInput.value = '';
+    pinInput.focus();
+    return;
+  }
+
+  completeAdminUnlock();
 });
+
+document.getElementById('pin-modal-close').addEventListener('click', closePinModal);
+document.getElementById('pin-cancel-btn').addEventListener('click', closePinModal);
+pinModal.addEventListener('click', (e) => {
+  if (e.target === pinModal) closePinModal();
+});
+
+pinInput.addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+  pinHintEl.hidden = true;
+});
+
+pinConfirmInput.addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+  pinHintEl.hidden = true;
+});
+
+registerLogoAdminGesture();
+syncAdminUi();
 
 deleteModal.addEventListener('click', (e) => {
   if (e.target === deleteModal) closeDeleteModal();
