@@ -11,7 +11,9 @@ Tablet-friendly web app for capturing customer details at the stall. **Works off
 - Thank-you screen with Instagram QR code
 - Saved entries: search, sort, edit, delete, pagination
 - Export filtered list as CSV or PDF
-- Data stored on the iPad (localStorage)
+- **Shared cloud storage (Firebase)** — 2 iPads stay in sync
+- Duplicate phone number blocked across tablets
+- Offline entry with sync when back online
 
 ---
 
@@ -25,7 +27,9 @@ The app is deployed at **[sugar-coat-bakers.netlify.app](https://sugar-coat-bake
 
 Code lives on GitHub: **[ms-tech-geek/sugar-coat-bakers](https://github.com/ms-tech-geek/sugar-coat-bakers)**.
 
-Push to `main` → Netlify auto-deploys (after GitHub is linked in Netlify — see below).
+Push to `main` → Netlify auto-deploys.
+
+**Firebase (2-iPad sync):** follow **[FIREBASE_SETUP.md](./FIREBASE_SETUP.md)** once before stall day.
 
 ### Step 2 — Install on iPad (one time, at home)
 
@@ -65,8 +69,8 @@ Open `http://localhost:8080` on your Mac, or `http://<mac-ip>:8080` on iPad (sam
 ## Important notes
 
 - **Use Safari + Add to Home Screen.** Opening `index.html` from the Files app is unreliable.
-- **One iPad = one database.** Entries are stored in that iPad’s browser. Use the same iPad all day.
-- **Data stays on the iPad.** The public website URL does not upload customer data. Someone on another device cannot see your stall entries.
+- **Two iPads share one database** via Firebase when configured (see FIREBASE_SETUP.md).
+- **Wi‑Fi or hotspot at stall** recommended so both tablets sync (offline entry still works, syncs later).
 - **Admin PIN protects export & clear.** Tap the logo **5 times** → set or enter a 4-digit PIN → admin tools appear for 30 minutes. Customers only see the entry form.
 - **Export before clearing.** Use CSV/PDF export to back up; “Clear all entries” is permanent.
 - **Instagram QR** works offline (image is bundled in the app).
@@ -83,5 +87,9 @@ Open `http://localhost:8080` on your Mac, or `http://<mac-ip>:8080` on iPad (sam
 | `styles.css` | Brand styling |
 | `manifest.json` | Home Screen app metadata |
 | `service-worker.js` | Offline caching |
+| `firebase-config.js` | Your Firebase project keys |
+| `firebase-db.js` | Firestore sync layer |
+| `firestore.rules` | Copy into Firebase Console |
+| `FIREBASE_SETUP.md` | Step-by-step Firebase setup |
 | `assets/instagram-qr.png` | Instagram follow QR |
-| `assets/vendor/` | PDF export libraries (offline) |
+| `assets/vendor/` | Firebase + PDF libraries (offline) |

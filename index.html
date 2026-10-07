@@ -55,7 +55,7 @@
 
   <div class="page">
     <header class="header">
-      <div class="logo-frame" id="logo-frame" title="">
+      <div class="logo-frame" id="logo-frame">
         <img src="assets/logo.jpg" alt="Sugar Coat Bakers — Eggless" class="logo">
       </div>
       <p class="tagline">HOMEMADE &bull; FRESH &bull; MADE FROM SCRATCH</p>
@@ -146,6 +146,8 @@
       WHERE HEALTH MEETS INDULGENCE
       <span class="footer-heart">&#9825;</span>
     </footer>
+
+    <p class="sync-status sync-status-pending" id="sync-status" hidden aria-live="polite"></p>
 
     <div class="admin-links" id="admin-links" hidden>
       <button type="button" class="export-link" id="export-trigger" aria-label="View and export saved entries">
@@ -279,6 +281,11 @@
     </form>
   </dialog>
 
+  <script src="assets/vendor/firebase-app-compat.js"></script>
+  <script src="assets/vendor/firebase-auth-compat.js"></script>
+  <script src="assets/vendor/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-db.js"></script>
   <script src="assets/vendor/jspdf.umd.min.js"></script>
   <script src="assets/vendor/jspdf.plugin.autotable.min.js"></script>
   <script src="app.js"></script>

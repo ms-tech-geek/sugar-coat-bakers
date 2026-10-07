@@ -1,4 +1,3 @@
-const STORAGE_KEY = 'sugar-coat-customers';
 const ADMIN_PIN_KEY = 'sugar-coat-admin-pin';
 const ADMIN_SESSION_KEY = 'sugar-coat-admin-until';
 const ADMIN_SESSION_MS = 30 * 60 * 1000;
@@ -74,8 +73,10 @@ const pinMessageEl = document.getElementById('pin-message');
 const pinHintEl = document.getElementById('pin-hint');
 const pinModalTitle = document.getElementById('pin-modal-title');
 const pinSubmitBtn = document.getElementById('pin-submit-btn');
+const syncStatusEl = document.getElementById('sync-status');
 
 let pinModalMode = 'verify'; // 'verify' | 'setup'
+let appReady = false;
 let pendingAdminAction = null;
 let logoTapCount = 0;
 let logoTapTimer = null;
@@ -206,24 +207,42 @@ function registerLogoAdminGesture() {
 }
 
 function getCustomers() {
-  try {
-    const customers = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    let migrated = false;
-    customers.forEach((c) => {
-      if (!c.id) {
-        c.id = crypto.randomUUID();
-        migrated = true;
-      }
-    });
-    if (migrated) saveCustomers(customers);
-    return customers;
-  } catch {
-    return [];
-  }
+  return SugarCoatDb.getCustomers();
 }
 
-function saveCustomers(customers) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
+function setFormEnabled(enabled) {
+  appReady = enabled;
+  form.querySelectorAll('input, textarea, button[type="submit"]').forEach((el) => {
+    el.disabled = !enabled;
+  });
+}
+
+function updateSyncStatus(meta = {}) {
+  if (!syncStatusEl) return;
+  const { online = SugarCoatDb.isOnline(), ready = SugarCoatDb.isReady() } = meta;
+
+  if (!SugarCoatDb.isConfigured()) {
+    syncStatusEl.hidden = false;
+    syncStatusEl.textContent = 'Setup required — add Firebase config';
+    syncStatusEl.className = 'sync-status sync-status-error';
+    return;
+  }
+
+  if (!ready) {
+    syncStatusEl.hidden = false;
+    syncStatusEl.textContent = 'Connecting…';
+    syncStatusEl.className = 'sync-status sync-status-pending';
+    return;
+  }
+
+  syncStatusEl.hidden = false;
+  if (online) {
+    syncStatusEl.textContent = 'Synced — shared across iPads';
+    syncStatusEl.className = 'sync-status sync-status-ok';
+  } else {
+    syncStatusEl.textContent = 'Offline — saving locally, will sync';
+    syncStatusEl.className = 'sync-status sync-status-offline';
+  }
 }
 
 function formatTime(isoString) {
@@ -421,6 +440,9 @@ function showForm() {
   formCard.hidden = false;
   form.reset();
   clearAllErrors();
+  if (appReady) {
+    form.querySelector('button[type="submit"]').disabled = false;
+  }
   nameInput.focus();
 }
 
@@ -621,21 +643,28 @@ function closeDeleteModal() {
   deleteModal.close();
 }
 
-function deleteEntry(customerId) {
-  const customers = getCustomers().filter((c) => c.id !== customerId);
-  saveCustomers(customers);
-  updateEntryCount();
-  renderEntriesTable(currentPage);
-  closeDeleteModal();
-  showToast('Entry deleted');
+async function deleteEntry(customerId) {
+  try {
+    await SugarCoatDb.deleteCustomer(customerId);
+    updateEntryCount();
+    renderEntriesTable(currentPage);
+    closeDeleteModal();
+    showToast('Entry deleted');
+  } catch {
+    showToast('Could not delete — try again');
+  }
 }
 
-function clearAllEntries() {
-  saveCustomers([]);
-  updateEntryCount();
-  renderEntriesTable(1);
-  closeDeleteModal();
-  showToast('All entries cleared');
+async function clearAllEntries() {
+  try {
+    await SugarCoatDb.clearAllCustomers();
+    updateEntryCount();
+    renderEntriesTable(1);
+    closeDeleteModal();
+    showToast('All entries cleared');
+  } catch {
+    showToast('Could not clear — try again');
+  }
 }
 
 function getExportCustomers() {
@@ -843,8 +872,12 @@ bindNameInput(editNameInput, editHints.name);
 bindPhoneInput(editPhoneInput, editHints.phone);
 bindAmountInput(editAmountInput, editHints.amount);
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (!appReady) {
+    showToast('Still connecting — please wait');
+    return;
+  }
   clearAllErrors();
 
   const data = validateFields({
@@ -860,6 +893,17 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
+  const duplicate = SugarCoatDb.findByPhone(data.phone);
+  if (duplicate) {
+    setFieldError(
+      phoneInput,
+      hints.phone,
+      `Already registered as ${duplicate.name}. Check saved entries.`
+    );
+    showToast('This phone number is already in the list');
+    return;
+  }
+
   const customer = {
     id: crypto.randomUUID(),
     name: data.name,
@@ -869,15 +913,25 @@ form.addEventListener('submit', (e) => {
     createdAt: new Date().toISOString(),
   };
 
-  const customers = getCustomers();
-  customers.push(customer);
-  saveCustomers(customers);
-  updateEntryCount();
-  showThankYou(customer);
+  const saveBtn = form.querySelector('button[type="submit"]');
+  saveBtn.disabled = true;
+
+  try {
+    await SugarCoatDb.addCustomer(customer);
+    updateEntryCount();
+    showThankYou(customer);
+  } catch {
+    showToast('Could not save — check connection and try again');
+    saveBtn.disabled = false;
+  }
 });
 
-editForm.addEventListener('submit', (e) => {
+editForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (!appReady) {
+    showToast('Still connecting — please wait');
+    return;
+  }
   clearEditErrors();
 
   const data = validateFields({
@@ -893,27 +947,32 @@ editForm.addEventListener('submit', (e) => {
     return;
   }
 
-  const customers = getCustomers();
-  const index = customers.findIndex((c) => c.id === editingCustomerId);
-
-  if (index === -1) {
+  const existing = getCustomers().find((c) => c.id === editingCustomerId);
+  if (!existing) {
     showToast('Entry not found');
     closeEditModal();
     return;
   }
 
-  customers[index] = {
-    ...customers[index],
-    name: data.name,
-    phone: data.phone,
-    amount: data.amount,
-    notes: data.notes,
-  };
+  const duplicate = SugarCoatDb.findByPhone(data.phone, editingCustomerId);
+  if (duplicate) {
+    setFieldError(
+      editPhoneInput,
+      editHints.phone,
+      `Phone used by ${duplicate.name}`
+    );
+    showToast('This phone number is already in the list');
+    return;
+  }
 
-  saveCustomers(customers);
-  renderEntriesTable();
-  closeEditModal();
-  showToast('Entry updated successfully');
+  try {
+    await SugarCoatDb.updateCustomer(editingCustomerId, data);
+    renderEntriesTable();
+    closeEditModal();
+    showToast('Entry updated successfully');
+  } catch {
+    showToast('Could not update — try again');
+  }
 });
 
 entriesTableBody.addEventListener('click', (e) => {
@@ -1061,6 +1120,8 @@ pinConfirmInput.addEventListener('input', (e) => {
 
 registerLogoAdminGesture();
 syncAdminUi();
+setFormEnabled(false);
+updateSyncStatus({ ready: false, online: navigator.onLine });
 
 deleteModal.addEventListener('click', (e) => {
   if (e.target === deleteModal) closeDeleteModal();
@@ -1094,4 +1155,29 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 }
 
-updateEntryCount();
+async function bootApp() {
+  if (!SugarCoatDb.isConfigured()) {
+    updateSyncStatus();
+    showToast('Firebase not configured — see FIREBASE_SETUP.md');
+    return;
+  }
+
+  try {
+    SugarCoatDb.onCustomersUpdated(() => {
+      updateEntryCount();
+      updateSyncStatus();
+      if (modal.open) renderEntriesTable(currentPage);
+    });
+
+    await SugarCoatDb.init();
+    setFormEnabled(true);
+    updateEntryCount();
+    updateSyncStatus();
+  } catch (err) {
+    console.error(err);
+    updateSyncStatus();
+    showToast('Cloud sync failed — check Firebase setup');
+  }
+}
+
+bootApp();
