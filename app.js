@@ -45,7 +45,7 @@ const editHints = {
 
 let editingCustomerId = null;
 let deletingCustomerId = null;
-let confirmMode = 'delete'; // 'delete' | 'clear-all' | 'load-sample'
+let confirmMode = 'delete'; // 'delete' | 'clear-all'
 let currentPage = 1;
 let searchQuery = '';
 let sortKey = 'createdAt';
@@ -54,44 +54,6 @@ let sortDir = 'desc';
 const entriesSearchInput = document.getElementById('entries-search');
 const filterCountEl = document.getElementById('filter-count');
 const entriesTableHead = document.querySelector('.entries-table thead');
-
-const SAMPLE_FIRST_NAMES = [
-  'Priya', 'Neha', 'Rohan', 'Ananya', 'Karan', 'Shruti', 'Tanya', 'Amit',
-  'Divya', 'Akash', 'Meera', 'Vikram', 'Sneha', 'Arjun', 'Pooja', 'Rahul',
-  'Kavita', 'Nikhil', 'Simran', 'Aditya', 'Ritu', 'Manish', 'Nidhi', 'Varun',
-  'Aisha', 'Deepak', 'Kriti', 'Sanjay', 'Lakshmi', 'Harsh', 'Tanvi', 'Gaurav',
-];
-
-const SAMPLE_LAST_NAMES = [
-  'Sharma', 'Verma', 'Mehta', 'Gupta', 'Singh', 'Malhotra', 'Bansal', 'Kapoor',
-  'Jain', 'Bhatia', 'Reddy', 'Iyer', 'Patel', 'Khanna', 'Chopra', 'Aggarwal',
-  'Das', 'Nair', 'Saxena', 'Kulkarni', 'Menon', 'Pillai', 'Bhatt', 'Desai',
-];
-
-const SAMPLE_NOTES = [
-  'Pre-order for weekend',
-  'Enquiry only — call back tomorrow',
-  'Interested in eggless cake tub',
-  'Wants 2 brownie boxes',
-  'Follow up on WhatsApp',
-  'Birthday order next week',
-  'Cheesecake slice pre-booked',
-  'Corporate order enquiry',
-  'Referral from neighbour',
-  'Needs sugar-free options',
-  'Pickup on Sunday morning',
-  'Gift wrap requested',
-  'Wants menu for Diwali hamper',
-  'Tried sample at stall — loved it',
-  'Pre-order: 1 kg eggless cake',
-  'Asked about custom message on cake',
-  'Regular customer — save number',
-  'Enquiry for society bulk order',
-  'Nut allergy — confirm ingredients',
-  'Will confirm quantity by evening',
-];
-
-const SAMPLE_AMOUNTS = [150, 199, 250, 299, 350, 399, 450, 499, 550, 650, 750, 850, 999, 1200, 1500, 1800, 2200, 2500, 3200, 4500, 5000];
 
 const paginationEl = document.getElementById('entries-pagination');
 const pageInfoEl = document.getElementById('page-info');
@@ -478,56 +440,12 @@ function closeEditModal() {
   editModal.close();
 }
 
-function randomPick(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function randomPhone() {
-  const prefix = randomPick(['6', '7', '8', '9']);
-  let phone = prefix;
-  for (let i = 0; i < 9; i += 1) {
-    phone += Math.floor(Math.random() * 10);
-  }
-  return phone;
-}
-
-function generateSampleCustomers(count = 100) {
-  const now = Date.now();
-  const customers = [];
-
-  for (let i = 0; i < count; i += 1) {
-    const name = `${randomPick(SAMPLE_FIRST_NAMES)} ${randomPick(SAMPLE_LAST_NAMES)}`;
-    const isEnquiry = Math.random() < 0.18;
-    const amount = isEnquiry ? 0 : randomPick(SAMPLE_AMOUNTS);
-    const includeNotes = isEnquiry || Math.random() < 0.55;
-    const notes = includeNotes ? randomPick(SAMPLE_NOTES) : '';
-    const hoursAgo = Math.floor(Math.random() * 72);
-    const minutesAgo = Math.floor(Math.random() * 60);
-    const createdAt = new Date(now - hoursAgo * 3600000 - minutesAgo * 60000).toISOString();
-
-    customers.push({
-      id: crypto.randomUUID(),
-      name,
-      phone: randomPhone(),
-      amount,
-      notes,
-      createdAt,
-    });
-  }
-
-  customers.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-  return customers;
-}
-
 function openConfirmModal(mode, message) {
   confirmMode = mode;
   deletingCustomerId = null;
   deleteMessageEl.textContent = message;
 
-  if (mode === 'load-sample') {
-    confirmModalTitle.textContent = 'Load Sample Data';
-    deleteConfirmBtn.textContent = 'Load Sample';
-  } else if (mode === 'clear-all') {
+  if (mode === 'clear-all') {
     confirmModalTitle.textContent = 'Clear All Entries';
     deleteConfirmBtn.textContent = 'Clear All';
   } else {
@@ -566,29 +484,6 @@ function deleteEntry(customerId) {
   renderEntriesTable(currentPage);
   closeDeleteModal();
   showToast('Entry deleted');
-}
-
-function loadSampleData() {
-  const existing = getCustomers().length;
-  if (existing > 0) {
-    openConfirmModal(
-      'load-sample',
-      `Replace ${existing} existing entr${existing === 1 ? 'y' : 'ies'} with 100 sample entries for preview?`
-    );
-    return;
-  }
-
-  applySampleData();
-}
-
-function applySampleData() {
-  saveCustomers(generateSampleCustomers(100));
-  updateEntryCount();
-  resetEntriesView();
-  renderEntriesTable(1);
-  closeDeleteModal();
-  modal.showModal();
-  showToast('100 sample entries loaded');
 }
 
 function clearAllEntries() {
@@ -941,18 +836,12 @@ editModal.addEventListener('click', (e) => {
 document.getElementById('delete-modal-close').addEventListener('click', closeDeleteModal);
 document.getElementById('delete-cancel-btn').addEventListener('click', closeDeleteModal);
 document.getElementById('delete-confirm-btn').addEventListener('click', () => {
-  if (confirmMode === 'load-sample') {
-    applySampleData();
-    return;
-  }
   if (confirmMode === 'clear-all') {
     clearAllEntries();
     return;
   }
   if (deletingCustomerId) deleteEntry(deletingCustomerId);
 });
-
-document.getElementById('load-sample-btn').addEventListener('click', loadSampleData);
 
 document.getElementById('clear-all-btn').addEventListener('click', () => {
   const total = getCustomers().length;
@@ -962,7 +851,7 @@ document.getElementById('clear-all-btn').addEventListener('click', () => {
   }
   openConfirmModal(
     'clear-all',
-    `Delete all ${total} entr${total === 1 ? 'y' : 'ies'}? This cannot be undone. Clear before stall day if you were previewing sample data.`
+    `Delete all ${total} entr${total === 1 ? 'y' : 'ies'}? This cannot be undone.`
   );
 });
 
