@@ -1,9 +1,9 @@
-/* Replace placeholders with your Firebase web app config (Project settings → Your apps). */
+/* Auto-generated — Sugar Coat Bakers Firebase project */
 const FIREBASE_CONFIG = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyAII3a3YuFkPnlGO4VccMcBl7xirP_GcbY',
+  authDomain: 'sugar-coat-bakers-stall.firebaseapp.com',
+  projectId: 'sugar-coat-bakers-stall',
+  storageBucket: 'sugar-coat-bakers-stall.firebasestorage.app',
+  messagingSenderId: '345124961103',
+  appId: '1:345124961103:web:628ddad3462dc54056633a',
 };
