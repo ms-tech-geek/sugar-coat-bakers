@@ -1121,7 +1121,9 @@ document.getElementById('export-pdf-btn').addEventListener('click', () => {
 document.addEventListener('click', closeExportMenu);
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).catch(() => {});
+  });
 }
 
 async function bootApp() {
