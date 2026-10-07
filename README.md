@@ -2,6 +2,9 @@
 
 Tablet-friendly web app for capturing customer details at the stall. **Works offline on iPad** — no laptop or internet needed on stall day (after one-time setup).
 
+**Live app:** [sugar-coat-bakers.netlify.app](https://sugar-coat-bakers.netlify.app)  
+**Source:** [github.com/ms-tech-geek/sugar-coat-bakers](https://github.com/ms-tech-geek/sugar-coat-bakers)
+
 ## Features
 
 - Entry form: name, phone, amount (₹), optional notes
