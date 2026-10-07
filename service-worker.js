@@ -1,5 +1,5 @@
 /* Sugar Coat Bakers — offline cache for iPad stall use */
-const CACHE = 'sugar-coat-v3';
+const CACHE = 'sugar-coat-v4';
 
 const ASSETS = [
   './',
@@ -10,6 +10,9 @@ const ASSETS = [
   './firebase-db.js',
   './manifest.json',
   './assets/logo.jpg',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './assets/apple-touch-icon.png',
   './assets/instagram-qr.png',
   './assets/vendor/firebase-app-compat.js',
   './assets/vendor/firebase-auth-compat.js',
