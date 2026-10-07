@@ -73,8 +73,6 @@ const pinMessageEl = document.getElementById('pin-message');
 const pinHintEl = document.getElementById('pin-hint');
 const pinModalTitle = document.getElementById('pin-modal-title');
 const pinSubmitBtn = document.getElementById('pin-submit-btn');
-const syncStatusEl = document.getElementById('sync-status');
-
 let pinModalMode = 'verify'; // 'verify' | 'setup'
 let appReady = false;
 let pendingAdminAction = null;
@@ -215,34 +213,6 @@ function setFormEnabled(enabled) {
   form.querySelectorAll('input, textarea, button[type="submit"]').forEach((el) => {
     el.disabled = !enabled;
   });
-}
-
-function updateSyncStatus(meta = {}) {
-  if (!syncStatusEl) return;
-  const { online = SugarCoatDb.isOnline(), ready = SugarCoatDb.isReady() } = meta;
-
-  if (!SugarCoatDb.isConfigured()) {
-    syncStatusEl.hidden = false;
-    syncStatusEl.textContent = 'Setup required — add Firebase config';
-    syncStatusEl.className = 'sync-status sync-status-error';
-    return;
-  }
-
-  if (!ready) {
-    syncStatusEl.hidden = false;
-    syncStatusEl.textContent = 'Connecting…';
-    syncStatusEl.className = 'sync-status sync-status-pending';
-    return;
-  }
-
-  syncStatusEl.hidden = false;
-  if (online) {
-    syncStatusEl.textContent = 'Synced — shared across iPads';
-    syncStatusEl.className = 'sync-status sync-status-ok';
-  } else {
-    syncStatusEl.textContent = 'Offline — saving locally, will sync';
-    syncStatusEl.className = 'sync-status sync-status-offline';
-  }
 }
 
 function formatTime(isoString) {
@@ -1121,7 +1091,6 @@ pinConfirmInput.addEventListener('input', (e) => {
 registerLogoAdminGesture();
 syncAdminUi();
 setFormEnabled(false);
-updateSyncStatus({ ready: false, online: navigator.onLine });
 
 deleteModal.addEventListener('click', (e) => {
   if (e.target === deleteModal) closeDeleteModal();
@@ -1157,7 +1126,6 @@ if ('serviceWorker' in navigator) {
 
 async function bootApp() {
   if (!SugarCoatDb.isConfigured()) {
-    updateSyncStatus();
     showToast('Firebase not configured — see FIREBASE_SETUP.md');
     return;
   }
@@ -1165,17 +1133,14 @@ async function bootApp() {
   try {
     SugarCoatDb.onCustomersUpdated(() => {
       updateEntryCount();
-      updateSyncStatus();
       if (modal.open) renderEntriesTable(currentPage);
     });
 
     await SugarCoatDb.init();
     setFormEnabled(true);
     updateEntryCount();
-    updateSyncStatus();
   } catch (err) {
     console.error(err);
-    updateSyncStatus();
     showToast('Cloud sync failed — check Firebase setup');
   }
 }

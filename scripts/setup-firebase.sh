@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 FB="npx firebase-tools"
-PROJECT_ID="${1:-sugar-coat-bakers-stall}"
+PROJECT_ID="${1:-sugar-coat-bakers}"
 
 echo "→ Checking Firebase login…"
 if ! $FB login:list 2>&1 | grep -q "Logged in"; then

@@ -1,9 +1,9 @@
 /* Auto-generated — Sugar Coat Bakers Firebase project */
 const FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyAII3a3YuFkPnlGO4VccMcBl7xirP_GcbY',
-  authDomain: 'sugar-coat-bakers-stall.firebaseapp.com',
-  projectId: 'sugar-coat-bakers-stall',
-  storageBucket: 'sugar-coat-bakers-stall.firebasestorage.app',
-  messagingSenderId: '345124961103',
-  appId: '1:345124961103:web:628ddad3462dc54056633a',
+  apiKey: 'AIzaSyDmEO37_B2fX9fpFmZVC8IpyC-XPjMY7l4',
+  authDomain: 'sugar-coat-bakers.firebaseapp.com',
+  projectId: 'sugar-coat-bakers',
+  storageBucket: 'sugar-coat-bakers.firebasestorage.app',
+  messagingSenderId: '676532908590',
+  appId: '1:676532908590:web:4aa4be704215986f40e5bf',
 };
