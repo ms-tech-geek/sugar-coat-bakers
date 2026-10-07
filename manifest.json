@@ -1,0 +1,20 @@
+{
+  "name": "Sugar Coat Bakers",
+  "short_name": "Sugar Coat",
+  "description": "Customer entry for Sugar Coat Bakers stall",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf6f2",
+  "theme_color": "#b8886b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sugar Coat">
+  <meta name="theme-color" content="#FAF6F2">
+  <title>Sugar Coat Bakers — New Customer Entry</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-scene" aria-hidden="true">
+    <div class="bg-gradient"></div>
+    <div class="bg-rings">
+      <span class="ring ring-1"></span>
+      <span class="ring ring-2"></span>
+      <span class="ring ring-3"></span>
+    </div>
+    <div class="bg-dots"></div>
+
+    <svg class="bg-pattern" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1200" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="roseGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#C9A088"/>
+          <stop offset="50%" stop-color="#B8886B"/>
+          <stop offset="100%" stop-color="#A87858"/>
+        </linearGradient>
+      </defs>
+      <!-- Laurel sprigs -->
+      <g opacity="0.14" stroke="url(#roseGold)" fill="none" stroke-width="1.2">
+        <path d="M60 180c20-30 50-40 80-30M60 180c15 25 20 50 10 75M140 150c-20 15-35 35-40 60"/>
+        <path d="M740 980c-20 30-50 40-80 30M740 980c-15-25-20-50-10-75M660 1010c20-15 35-35 40-60"/>
+      </g>
+      <!-- Hearts -->
+      <g opacity="0.12" fill="none" stroke="url(#roseGold)" stroke-width="1.3">
+        <path d="M680 220c0-18 14-32 32-32s32 14 32 32c0 24-32 48-32 48s-32-24-32-48z" transform="scale(0.35) translate(1550,500)"/>
+        <path d="M120 880c0-18 14-32 32-32s32 14 32 32c0 24-32 48-32 48s-32-24-32-48z" transform="scale(0.28) translate(280,2900)"/>
+        <path d="M400 1100c0-18 14-32 32-32s32 14 32 32c0 24-32 48-32 48s-32-24-32-48z" transform="scale(0.22) translate(1600,4600)"/>
+      </g>
+      <!-- Sparkle stars (logo motif) -->
+      <g opacity="0.18" fill="url(#roseGold)">
+        <path d="M400 120l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/>
+        <path d="M720 560l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity="0.7"/>
+        <path d="M80 640l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity="0.7"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="page">
+    <header class="header">
+      <div class="logo-frame">
+        <img src="assets/logo.jpg" alt="Sugar Coat Bakers — Eggless" class="logo">
+      </div>
+      <p class="tagline">HOMEMADE &bull; FRESH &bull; MADE FROM SCRATCH</p>
+    </header>
+
+    <main class="main">
+      <section class="card">
+        <h1 class="form-title">New Customer Entry</h1>
+        <div class="title-divider" aria-hidden="true">
+          <span class="divider-heart">&#9825;</span>
+        </div>
+
+        <form id="customer-form" novalidate>
+          <div class="field">
+            <div class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>
+            </div>
+            <div class="field-body">
+              <label for="name">Name <span class="req">*</span></label>
+              <input type="text" id="name" name="name" placeholder="Enter Customer Name" autocomplete="name" autocapitalize="words" spellcheck="false" required>
+              <p class="field-hint" id="name-hint" hidden></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 4h4l2 5-2.5 2.5a11 11 0 005 5L16 14l5 2v4a2 2 0 01-2.2 2 18 18 0 01-8.6-3.7 18 18 0 01-3.7-8.6A2 2 0 015 20V4z"/></svg>
+            </div>
+            <div class="field-body">
+              <label for="phone">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="Enter 10 Digit Mobile Number" inputmode="numeric" maxlength="10" autocomplete="tel" required>
+              <p class="field-hint" id="phone-hint" hidden></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-icon field-icon-rupee" aria-hidden="true">&#8377;</div>
+            <div class="field-body">
+              <label for="amount">Amount (&#8377;) <span class="req">*</span></label>
+              <input type="text" id="amount" name="amount" placeholder="Enter Amount (0 For Enquiry)" inputmode="decimal" required>
+              <p class="field-hint" id="amount-hint" hidden></p>
+            </div>
+          </div>
+
+          <div class="field field-notes">
+            <div class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            </div>
+            <div class="field-body">
+              <label for="notes">Notes <span class="opt">(Optional)</span></label>
+              <textarea id="notes" name="notes" rows="2" placeholder="Pre-Order, Enquiry Or Special Request" maxlength="200"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-save">
+            <span class="btn-heart">&#9829;</span> SAVE ENTRY
+          </button>
+        </form>
+      </section>
+
+      <section class="card thank-you-card" id="thank-you-card" hidden>
+        <h1 class="form-title">Thank You!</h1>
+        <p class="thank-you-name" id="thank-you-name"></p>
+        <p class="thank-you-detail" id="thank-you-detail"></p>
+        <div class="thank-you-instagram">
+          <p class="thank-you-ig-label">Follow us on Instagram</p>
+          <div class="thank-you-qr-wrap">
+            <img
+              src="assets/instagram-qr.png"
+              alt="Scan to follow @sugar_coat_bakers on Instagram"
+              class="thank-you-qr"
+              width="140"
+              height="140"
+              loading="eager"
+            >
+          </div>
+          <p class="thank-you-ig-handle">@sugar_coat_bakers</p>
+        </div>
+        <p class="thank-you-note">We&rsquo;re so glad you stopped by Sugar Coat Bakers.</p>
+        <button type="button" class="btn-save" id="new-entry-btn">
+          <span class="btn-heart">&#9829;</span> ADD NEW ENTRY
+        </button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span class="footer-heart">&#9825;</span>
+      WHERE HEALTH MEETS INDULGENCE
+      <span class="footer-heart">&#9825;</span>
+    </footer>
+
+    <div class="admin-links">
+      <button type="button" class="export-link" id="export-trigger" aria-label="View and export saved entries">
+        Export entries (<span id="entry-count">0</span>)
+      </button>
+      <button type="button" class="preview-link" id="load-sample-btn">Load sample data (100)</button>
+      <button type="button" class="preview-link preview-link-danger" id="clear-all-btn">Clear all entries</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog class="modal entries-modal" id="entries-modal">
+    <div class="modal-header entries-header">
+      <h2>Saved Entries</h2>
+      <div class="header-actions">
+        <div class="export-menu-wrap">
+          <button type="button" class="btn-header-icon btn-export-icon" id="export-menu-btn" aria-label="Export entries" aria-haspopup="menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          </button>
+          <div class="export-menu" id="export-menu" role="menu" hidden>
+            <button type="button" class="export-menu-item" id="export-csv-btn" role="menuitem">CSV</button>
+            <button type="button" class="export-menu-item" id="export-pdf-btn" role="menuitem">PDF</button>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <div class="entries-top-bar">
+      <div class="entries-stats-inline">
+        <span class="stat-pill"><span class="stat-k">Entries</span> <strong id="summary-count">0</strong></span>
+        <span class="stat-pill stat-pill-amt"><span class="stat-k">Total</span> <strong id="summary-amount">&#8377;0</strong></span>
+        <span class="filter-count" id="filter-count" hidden></span>
+      </div>
+      <label class="search-box search-box-compact" for="entries-search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="entries-search" placeholder="Search..." autocomplete="off" enterkeyhint="search">
+      </label>
+    </div>
+    <div class="modal-body">
+      <div class="table-wrap" id="entries-table-wrap">
+        <table class="entries-table">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th class="col-name sortable" data-sort="name" aria-sort="none">Name <span class="sort-icon"></span></th>
+              <th class="col-phone sortable" data-sort="phone" aria-sort="none">Phone <span class="sort-icon"></span></th>
+              <th class="col-amt sortable" data-sort="amount" aria-sort="none">Amount &#8377; <span class="sort-icon"></span></th>
+              <th class="col-when sortable" data-sort="createdAt" aria-sort="descending">When <span class="sort-icon">&#8595;</span></th>
+              <th class="col-notes sortable" data-sort="notes" aria-sort="none">Notes <span class="sort-icon"></span></th>
+              <th class="col-actions">Action</th>
+            </tr>
+          </thead>
+          <tbody id="entries-table-body"></tbody>
+        </table>
+      </div>
+      <nav class="pagination" id="entries-pagination" aria-label="Entries pagination" hidden>
+        <button type="button" class="page-btn" id="prev-page" aria-label="Previous page">&#8592; Prev</button>
+        <span class="page-info" id="page-info">Page 1 of 1</span>
+        <button type="button" class="page-btn" id="next-page" aria-label="Next page">Next &#8594;</button>
+      </nav>
+    </div>
+  </dialog>
+
+  <dialog class="modal confirm-modal" id="delete-modal">
+    <div class="modal-header">
+      <h2 id="confirm-modal-title">Confirm</h2>
+      <button type="button" class="modal-close" id="delete-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="confirm-body">
+      <p class="confirm-message" id="delete-message"></p>
+      <div class="edit-actions">
+        <button type="button" class="btn-cancel" id="delete-cancel-btn">Cancel</button>
+        <button type="button" class="btn-delete" id="delete-confirm-btn">Delete</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal edit-modal" id="edit-modal">
+    <div class="modal-header">
+      <h2>Edit Entry</h2>
+      <button type="button" class="modal-close" id="edit-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <form id="edit-form" class="edit-form" novalidate>
+      <div class="edit-field">
+        <label for="edit-name">Name <span class="req">*</span></label>
+        <input type="text" id="edit-name" placeholder="Enter Customer Name" autocapitalize="words" spellcheck="false" required>
+        <p class="field-hint" id="edit-name-hint" hidden></p>
+      </div>
+      <div class="edit-field">
+        <label for="edit-phone">Phone Number <span class="req">*</span></label>
+        <input type="tel" id="edit-phone" placeholder="Enter 10 Digit Mobile Number" inputmode="numeric" maxlength="10" required>
+        <p class="field-hint" id="edit-phone-hint" hidden></p>
+      </div>
+      <div class="edit-field">
+        <label for="edit-amount">Total Purchase Amount (&#8377;) <span class="req">*</span></label>
+        <input type="text" id="edit-amount" placeholder="Enter Amount (0 For Enquiry)" inputmode="decimal" required>
+        <p class="field-hint" id="edit-amount-hint" hidden></p>
+      </div>
+      <div class="edit-field">
+        <label for="edit-notes">Notes <span class="opt">(Optional)</span></label>
+        <textarea id="edit-notes" rows="3" placeholder="Pre-Order, Enquiry Or Special Request" maxlength="200"></textarea>
+      </div>
+      <div class="edit-actions">
+        <button type="button" class="btn-cancel" id="edit-cancel-btn">Cancel</button>
+        <button type="submit" class="btn-export">Save Changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="assets/vendor/jspdf.umd.min.js"></script>
+  <script src="assets/vendor/jspdf.plugin.autotable.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
